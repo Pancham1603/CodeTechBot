@@ -286,6 +286,6 @@ async def changepresence():
         await asyncio.sleep(3)
 
 
-token = ''  # input the unique bot token from dev panel (string)
+token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ._rr60uvXTUsUv3rfv0tbYkhRpl0'  # input the unique bot token from dev panel (string)
 bot.loop.create_task(changepresence())  # to change status every 3 seconds
 bot.run(token)  # finally run the bot
