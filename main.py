@@ -1,3 +1,6 @@
+# This project has been made by Pancham Agarwal for internal use in CodeTech BVN only.
+# For any queries mailto: pancham1603@gmail.com
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -6,10 +9,13 @@ import aiohttp
 import random
 import smtplib
 import config
-# import os
 
 bot = commands.Bot(command_prefix="!")
 
+TFAcodes = {}
+
+
+# Sends email by obtaining credentials from the config.py file
 def sendverifymail(receiver, message):
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.ehlo()
@@ -17,6 +23,7 @@ def sendverifymail(receiver, message):
     server.login(config.EMAIL_ADDRESS, config.PASSWORD)
     server.sendmail(config.EMAIL_ADDRESS, receiver, message)
     server.quit()
+
 
 @bot.event
 async def on_ready():
@@ -26,6 +33,7 @@ async def on_ready():
     print('---------')
 
 
+# Reacts to the mentioned messages
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -38,32 +46,75 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
+# Member welcome
+@bot.event
+async def on_member_join(member):
+    doorchannel = bot.get_channel(***REMOVED***)
+    verifychannel = bot.get_channel(***REMOVED***)
+    await doorchannel.send(
+        f"{member.mention} Welcome to the server! Type !sendcode <your_email> in {verifychannel.mention} to gain access to the server.")
+    await bot.process_commands(member)
+
+
+# Member leave
+@bot.event
+async def on_member_remove(member):
+    doorchannel = bot.get_channel(***REMOVED***)
+    await doorchannel.send(f"{member.mention} left the server.")
+    await bot.process_commands(member)
+
+
+# Sends a verification code to the inputted email-id using the sendverifymail() function
+# Maps the generated code with the user's discord name until the user is verified
 @bot.command()
-async def sendcode(ctx,*, email):
-    code = random.randint(100000, 999999)
-    subject = 'CodeTech BVN DISCORD VERIFICATION'
+async def sendcode(ctx, *, email):
+    sendcode.code = random.randint(100000, 999999)
+    subject = f'CodeTech BVN Discord Verification ({sendcode.code})'
     msg = f"""
-            Welcome to CodeTech BVN's official Discord Server!
+            Hey {ctx.author.name}! Welcome to CodeTech BVN's official Discord Server!
                 Type '!verify XXXXXX' in the verify channel to get verified.
-                Your verification code is {code}
-            Regards,
+                Your verification code is {sendcode.code}
+            
+            Server Rules:
+                1.  Please keep your messages as formal as possible: no cursing, no slangs, and no off-topic conversations. 
+                2. Please be kind to other participants: don't write anything disrespectful or potentially offensive.
+                3. Please do not write in all caps. 
+                4. Please ONLY ping others when extremely urgent, and even then, only ping once and be patient. 
+                5. No Spamming, no copy-pastes, no walls of text, ear-rape in voice channels, or even send weird messages to annoy people on purpose, etc.
+                6. All chat must be in the respective channels. Random stuff and chit-chat to be done in #spam, use #general for important work. 
+                7. Use Common Sense, if you think something might not be allowed, don't do it.
+                8. Contact the moderators for roles, channel and personal vc.                
+                We will strictly enforce the above set of rules and actively take action, depending on severity, against those in violation.
+            
+            Regards
             Team CodeTech
             Birla Vidya Niketan
             """
     message = 'Subject: {}\n\n{}'.format(subject, msg)
     sendverifymail(email, message)
     await ctx.send(f'{ctx.author.mention} Check your inbox and verify by using the command !verify XXXXXX')
-    return code
+    member = ctx.author
+    TFAcodes[member] = sendcode.code
 
 
-
-
-
-#@bot.command()
-#async def verify(ctx,*,input):
-
-
+# Verifies the new user with the code generated above
+# Deletes the key from the map one the user gets verified
 @bot.command()
+async def verify(ctx, *, input):
+    member = ctx.author
+    if str(input) == str(TFAcodes.get(member)):
+        verifyrole = ctx.guild.get_role(***REMOVED***)
+        genchannel = bot.get_channel(***REMOVED***)
+        await member.add_roles(verifyrole)
+        await genchannel.send(f"{ctx.author.mention} You are now verified.")
+        del TFAcodes[member]
+    else:
+        await ctx.send(f'{ctx.author.mention} Invalid code! Request a new code.')
+        del TFAcodes[member]
+
+
+# Bullies the mentioned user with a random line
+@bot.command(aliases=['roast'])
 async def bully(ctx, member: discord.Member):
     savage_lines = ['Remember when I asked for your opinion? Me neither.',
                     'Your ass must be jealous of all that shit that comes out of your mouth.',
@@ -98,15 +149,14 @@ async def bully(ctx, member: discord.Member):
 
     line = random.choice(savage_lines)
 
-    # pancham = discord.utils.get(ctx.server.roles, name = 'CT#Vice Prez')
-
-    # if pancham in member.role_mentions:
-    #     await ctx.send(f'{ctx.author.mention} {line}')
-    #     await ctx.send(f"{ctx.author.mention} You can't bully the god.")
+    if member == 'Pancham#0012':
+        await ctx.send(f'{ctx.author.mention} {line}')
+        await ctx.send(f"{ctx.author.mention} You can't bully the god.")
 
     await ctx.send(f"{member.mention} {line}")
 
 
+# Repeats whatever is typed and deletes the user command
 @bot.command(aliases=['echo', 'say'])
 async def mimic(ctx, *, words: commands.clean_content):
     channel = ctx.channel
@@ -115,11 +165,14 @@ async def mimic(ctx, *, words: commands.clean_content):
     await ctx.send(words)
 
 
+# Test command
 @bot.command()
 async def ping(ctx):
+    print(ctx.author)
     await ctx.send("Pong!")
 
 
+# Displays a detailed list of useful commands
 @bot.command()
 async def cthelp(ctx):
     embed = discord.Embed(title="Here, check out some of my awesome features!", description='  ',
@@ -140,10 +193,12 @@ async def cthelp(ctx):
     embed.add_field(name='!ban (Mod only)', value='Bans the mentioned user', inline=False)
 
     embed.add_field(name='!purge/!clear (Mod only)', value='Deletes bulk messages', inline=False)
-    embed.add_field(name='!bully (mention_user)', value="Bullies the mentioned user", inline=False)
+    embed.add_field(name='!bully/!roast (mention_user)', value="Bullies the mentioned user", inline=False)
+    embed.add_field(name='!sendcode email_here', value='Sends TFA email for verified role', inline=False)
     await ctx.send(embed=embed)
 
 
+# Displays full info of the requested user
 @bot.command()
 async def user(ctx, member: discord.Member = None):
     member = ctx.author if not member else member
@@ -169,6 +224,7 @@ async def user(ctx, member: discord.Member = None):
     await ctx.send(embed=embed)
 
 
+# Kicks the mentioned user (Mod only)
 @bot.command()
 @has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, *, reason='No reason'):
@@ -176,6 +232,7 @@ async def kick(ctx, member: discord.Member, *, reason='No reason'):
     await ctx.send(f"{member.mention} was kicked by {ctx.author.mention}. [{reason}]")
 
 
+# Bans the mentioned user (Mod only)
 @bot.command()
 @has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, *, reason='No reason'):
@@ -183,6 +240,7 @@ async def ban(ctx, member: discord.Member, *, reason='No reason'):
     await ctx.send(f"{member.mention} was banned by {ctx.author.mention}. [{reason}]")
 
 
+# Deletes messages in bulk (Mod only)
 @bot.command(aliases=['purge'])
 @has_permissions(manage_messages=True)
 async def clear(ctx, amount: int):
@@ -190,14 +248,9 @@ async def clear(ctx, amount: int):
     await ctx.send(f"{ctx.author} deleted {amount} messages.", delete_after=5)
 
 
+# Creates a list of upcoming events (under development)
 @bot.command()
 async def addevent(ctx, *, event=None):
-    upcoming = []
-    if event != None:
-        upcoming.append(event)
-    else:
-        ctx.channel.send("This command requires an event name.")
-
     embed = discord.Embed(title="Upcoming Events")
     embed.set_footer(text="To add an event use !addevent command.")
     embed.add_field(name=event, value='Command under development')
@@ -205,6 +258,7 @@ async def addevent(ctx, *, event=None):
     await ctx.send(embed=embed)
 
 
+# Mutes the mentioned user (Mod only)
 @bot.command()
 @has_permissions(kick_members=True)
 async def mute(ctx, member: discord.Member, *, reason='No reason'):
@@ -213,6 +267,7 @@ async def mute(ctx, member: discord.Member, *, reason='No reason'):
     await ctx.send(f"{member} was muted indefinitely by {ctx.author}. [{reason}]")
 
 
+# Unmutes the mentioned user (Mod only)
 @bot.command()
 @has_permissions(kick_members=True)
 async def unmute(ctx, member: discord.Member):
@@ -221,6 +276,7 @@ async def unmute(ctx, member: discord.Member):
     await ctx.send(f"{member} was unmuted by {ctx.author}")
 
 
+# Keeps changing the status of the bot
 async def changepresence():
     await bot.wait_until_ready()
     while not bot.is_closed():
@@ -230,16 +286,6 @@ async def changepresence():
         await asyncio.sleep(3)
 
 
-# for cog in os.listdir('.\\cogs'):
-#   if cog.endswith('.py'):
-#      try:
-#         cog = f"cogs.{cog.replace('.py', '')}"
-#        bot.load_extension(cog)
-#   except Exception as e:
-#      print(f"{cog} can't be loaded ")
-#     raise e
-# bot.load_extension('cogs/moderation.py')
-
-token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ.GaxI936_Q7x1BQS0LrQjCEzZkxE'
-bot.loop.create_task(changepresence())
-bot.run(token)
+token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ.GaxI936_Q7x1BQS0LrQjCEzZkxE'  # input the unique bot token from dev panel (string)
+bot.loop.create_task(changepresence())  # to change status every 3 seconds
+bot.run(token)  # finally run the bot
