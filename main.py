@@ -211,6 +211,6 @@ async def changepresence():
 #     raise e
 # bot.load_extension('cogs/moderation.py')
 
-token = ''
+token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ.GaxI936_Q7x1BQS0LrQjCEzZkxE'
 bot.loop.create_task(changepresence())
 bot.run(token)
