@@ -2,12 +2,21 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 import asyncio
+import aiohttp
 import random
-
+import smtplib
+import config
 # import os
 
 bot = commands.Bot(command_prefix="!")
 
+def sendverifymail(receiver, message):
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.ehlo()
+    server.starttls()
+    server.login(config.EMAIL_ADDRESS, config.PASSWORD)
+    server.sendmail(config.EMAIL_ADDRESS, receiver, message)
+    server.quit()
 
 @bot.event
 async def on_ready():
@@ -29,9 +38,29 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-# @bot.event
-# async def on_message_delete(message):
-#     await message.channel.send(f"A message was deleted by {message.author}")
+@bot.command()
+async def sendcode(ctx,*, email):
+    code = random.randint(100000, 999999)
+    subject = 'CodeTech BVN DISCORD VERIFICATION'
+    msg = f"""
+            Welcome to CodeTech BVN's official Discord Server!
+                Type '!verify XXXXXX' in the verify channel to get verified.
+                Your verification code is {code}
+            Regards,
+            Team CodeTech
+            Birla Vidya Niketan
+            """
+    message = 'Subject: {}\n\n{}'.format(subject, msg)
+    sendverifymail(email, message)
+    await ctx.send(f'{ctx.author.mention} Check your inbox and verify by using the command !verify XXXXXX')
+    return code
+
+
+
+
+
+#@bot.command()
+#async def verify(ctx,*,input):
 
 
 @bot.command()
@@ -158,16 +187,16 @@ async def ban(ctx, member: discord.Member, *, reason='No reason'):
 @has_permissions(manage_messages=True)
 async def clear(ctx, amount: int):
     await ctx.channel.purge(limit=amount + 1)
-    await ctx.send(f"{ctx.author} deleted {amount} messages.")
+    await ctx.send(f"{ctx.author} deleted {amount} messages.", delete_after=5)
 
 
 @bot.command()
 async def addevent(ctx, *, event=None):
     upcoming = []
-    if event == None:
-        ctx.channel.send("This command requires an event name.")
-    else:
+    if event != None:
         upcoming.append(event)
+    else:
+        ctx.channel.send("This command requires an event name.")
 
     embed = discord.Embed(title="Upcoming Events")
     embed.set_footer(text="To add an event use !addevent command.")
