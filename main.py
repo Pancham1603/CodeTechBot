@@ -29,9 +29,9 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@bot.event
-async def on_message_delete(message):
-    await message.channel.send(f"A message was deleted by {message.author}")
+# @bot.event
+# async def on_message_delete(message):
+#     await message.channel.send(f"A message was deleted by {message.author}")
 
 
 @bot.command()
@@ -69,7 +69,7 @@ async def bully(ctx, member: discord.Member):
 
     line = random.choice(savage_lines)
 
-     # pancham = discord.utils.get(ctx.server.roles, name = 'CT#Vice Prez')
+    # pancham = discord.utils.get(ctx.server.roles, name = 'CT#Vice Prez')
 
     # if pancham in member.role_mentions:
     #     await ctx.send(f'{ctx.author.mention} {line}')
@@ -78,9 +78,11 @@ async def bully(ctx, member: discord.Member):
     await ctx.send(f"{member.mention} {line}")
 
 
-
 @bot.command(aliases=['echo', 'say'])
 async def mimic(ctx, *, words: commands.clean_content):
+    channel = ctx.channel
+    msg = discord.utils.get(await channel.history(limit=100).flatten(), author=ctx.author)
+    await msg.delete()
     await ctx.send(words)
 
 
