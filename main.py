@@ -9,6 +9,8 @@ import aiohttp
 import random
 import smtplib
 import config
+import youtube_dl
+import os
 
 bot = commands.Bot(command_prefix="!")
 
@@ -71,25 +73,25 @@ async def sendcode(ctx, *, email):
     sendcode.code = random.randint(100000, 999999)
     subject = f'CodeTech BVN Discord Verification ({sendcode.code})'
     msg = f"""
-            Hey {ctx.author.name}! Welcome to CodeTech BVN's official Discord Server!
-                Type '!verify XXXXXX' in the verify channel to get verified.
-                Your verification code is {sendcode.code}
-            
-            Server Rules:
-                1.  Please keep your messages as formal as possible: no cursing, no slangs, and no off-topic conversations. 
-                2. Please be kind to other participants: don't write anything disrespectful or potentially offensive.
-                3. Please do not write in all caps. 
-                4. Please ONLY ping others when extremely urgent, and even then, only ping once and be patient. 
-                5. No Spamming, no copy-pastes, no walls of text, ear-rape in voice channels, or even send weird messages to annoy people on purpose, etc.
-                6. All chat must be in the respective channels. Random stuff and chit-chat to be done in #spam, use #general for important work. 
-                7. Use Common Sense, if you think something might not be allowed, don't do it.
-                8. Contact the moderators for roles, channel and personal vc.                
-                We will strictly enforce the above set of rules and actively take action, depending on severity, against those in violation.
-            
-            Regards
-            Team CodeTech
-            Birla Vidya Niketan
-            """
+Hey {ctx.author.name}! Welcome to CodeTech BVN's official Discord Server!
+Type '!verify XXXXXX' in the verify channel to get verified.
+Your verification code is {sendcode.code}
+
+Server Rules:
+1.  Please keep your messages as formal as possible: no cursing, no slangs, and no off-topic conversations. 
+2. Please be kind to other participants: don't write anything disrespectful or potentially offensive.
+3. Please do not write in all caps. 
+4. Please ONLY ping others when extremely urgent, and even then, only ping once and be patient. 
+5. No Spamming, no copy-pastes, no walls of text, ear-rape in voice channels, or even send weird messages to annoy people on purpose, etc.
+6. All chat must be in the respective channels. Random stuff and chit-chat to be done in #spam, use #general for important work. 
+7. Use Common Sense, if you think something might not be allowed, don't do it.
+8. Contact the moderators for roles, channel and personal vc.                
+We will strictly enforce the above set of rules and actively take action, depending on severity, against those in violation.
+
+Regards
+Team CodeTech
+Birla Vidya Niketan
+"""
     message = 'Subject: {}\n\n{}'.format(subject, msg)
     sendverifymail(email, message)
     await ctx.send(f'{ctx.author.mention} Check your inbox and verify by using the command !verify XXXXXX')
@@ -169,7 +171,7 @@ async def mimic(ctx, *, words: commands.clean_content):
 @bot.command()
 async def ping(ctx):
     print(ctx.author)
-    await ctx.send("Pong!")
+    await ctx.send(f"Pong! **Latency: {round(bot.latency * 1000)}ms**")
 
 
 # Displays a detailed list of useful commands
@@ -228,24 +230,30 @@ async def user(ctx, member: discord.Member = None):
 @bot.command()
 @has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, *, reason='No reason'):
+    logchannel = bot.get_channel(***REMOVED***)
     await member.kick(reason=reason)
     await ctx.send(f"{member.mention} was kicked by {ctx.author.mention}. [{reason}]")
+    await logchannel.send(f"{member.mention} was kicked by {ctx.author.mention}. [{reason}]")
 
 
 # Bans the mentioned user (Mod only)
 @bot.command()
 @has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, *, reason='No reason'):
+    logchannel = bot.get_channel(***REMOVED***)
     await member.kick(reason=reason)
     await ctx.send(f"{member.mention} was banned by {ctx.author.mention}. [{reason}]")
+    await logchannel.send(f"{member.mention} was banned by {ctx.author.mention}. [{reason}]")
 
 
 # Deletes messages in bulk (Mod only)
 @bot.command(aliases=['purge'])
 @has_permissions(manage_messages=True)
 async def clear(ctx, amount: int):
+    logchannel = bot.get_channel(***REMOVED***)
     await ctx.channel.purge(limit=amount + 1)
     await ctx.send(f"{ctx.author} deleted {amount} messages.", delete_after=5)
+    await logchannel.send(f"{ctx.author} deleted {amount} messages in {ctx.channel}")
 
 
 # Creates a list of upcoming events (under development)
@@ -261,19 +269,78 @@ async def addevent(ctx, *, event=None):
 # Mutes the mentioned user (Mod only)
 @bot.command()
 @has_permissions(kick_members=True)
-async def mute(ctx, member: discord.Member, *, reason='No reason'):
-    muterole = ctx.guild.get_role(***REMOVED***)
-    await member.add_roles(muterole)
-    await ctx.send(f"{member} was muted indefinitely by {ctx.author}. [{reason}]")
+async def mute(ctx, member: discord.Member, time='null', *, reason='No reason'):
+    logchannel = bot.get_channel(***REMOVED***)
+    # muterole = ctx.guild.get_role(***REMOVED***)
+    muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
+    time_convert = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+    if time == 'null':
+        await ctx.send(f'{ctx.author.mention} Please specify a time period!')
+    else:
+        if not time[-1].isalpha:
+            tempmute = int(time[0]) * time_convert['m']
+        else:
+            tempmute = int(time[0]) * time_convert[time[-1]]
+        await member.add_roles(muted_role)
+        embed = discord.Embed(title = f"{member.name} has been muted for {time} by {ctx.author.name}",description=reason, color=discord.Colour.blue())
+        await ctx.send(embed=embed)
+        await logchannel.send(f"{member} was muted for {time} by {ctx.author}. [{reason}]")
+
+        await asyncio.sleep(tempmute)
+        await member.remove_roles(muted_role)
+        await ctx.send(f'{member.mention} You have been unmuted.')
 
 
 # Unmutes the mentioned user (Mod only)
 @bot.command()
 @has_permissions(kick_members=True)
 async def unmute(ctx, member: discord.Member):
+    logchannel = bot.get_channel(***REMOVED***)
     muterole = ctx.guild.get_role(***REMOVED***)
     await member.remove_roles(muterole)
-    await ctx.send(f"{member} was unmuted by {ctx.author}")
+    await ctx.send(f"{member.mention} was unmuted by {ctx.author.mention}")
+    await logchannel.send(f"{member} was unmuted by {ctx.author}")
+
+
+@bot.command()
+async def play(ctx):
+    channel = ctx.author.voice.channel
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if not voice.is_connected():
+        await channel.connect()
+
+
+@bot.command()
+async def leave(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_connected():
+        await voice.disconnect()
+    else:
+        await ctx.send('I am not connected to any voice channel.')
+
+
+@bot.command()
+async def pause(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_playing():
+        await voice.pause()
+    else:
+        await ctx.send('I am not playing any audio right now.')
+
+
+@bot.command()
+async def resume(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if voice.is_paused():
+        await voice.resume()
+    else:
+        await ctx.send('I am already playing audio.')
+
+
+@bot.command()
+async def stop(ctx):
+    voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    await voice.stop()
 
 
 # Keeps changing the status of the bot
