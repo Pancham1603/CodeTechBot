@@ -282,7 +282,8 @@ async def mute(ctx, member: discord.Member, time='null', *, reason='No reason'):
         else:
             tempmute = int(time[0]) * time_convert[time[-1]]
         await member.add_roles(muted_role)
-        embed = discord.Embed(title = f"{member.name} has been muted for {time} by {ctx.author.name}",description=reason, color=discord.Colour.blue())
+        embed = discord.Embed(title=f"{member.name} has been muted for {time} by {ctx.author.name}", description=reason,
+                              color=discord.Colour.blue())
         await ctx.send(embed=embed)
         await logchannel.send(f"{member} was muted for {time} by {ctx.author}. [{reason}]")
 
