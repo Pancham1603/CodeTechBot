@@ -1,16 +1,13 @@
 # This project has been made by Pancham Agarwal for internal use in CodeTech BVN only.
 # For any queries mailto: pancham1603@gmail.com
 
+import asyncio
+import random
+import smtplib
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-import asyncio
-import aiohttp
-import random
-import smtplib
 import config
-import youtube_dl
-import os
 
 bot = commands.Bot(command_prefix="!")
 
