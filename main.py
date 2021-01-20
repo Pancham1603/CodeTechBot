@@ -11,7 +11,6 @@ import config
 
 bot = commands.Bot(command_prefix="!")
 
-
 TFAcodes = {}
 
 
@@ -34,8 +33,8 @@ async def on_ready():
 
 
 # Reacts to the mentioned messages
-#@bot.event
-#async def on_message(message):
+# @bot.event
+# async def on_message(message):
 #    if message.author == bot.user:
 #        return
 #    if message.content == "!subhajit":
@@ -103,14 +102,17 @@ Birla Vidya Niketan
 async def verify(ctx, *, input):
     member = ctx.author
     if str(input) == str(TFAcodes.get(member)):
+        del TFAcodes[member]
         verifyrole = ctx.guild.get_role(***REMOVED***)
         genchannel = bot.get_channel(***REMOVED***)
         await member.add_roles(verifyrole)
         await genchannel.send(f"{ctx.author.mention} You are now verified.")
-        del TFAcodes[member]
-        await ctx.send("Request a code by using '!sendcode email_here' and then verify by using '!verify code_here'")
+        await ctx.send('Verified')
+        await ctx.send(
+            "New members: Request a code by using '!sendcode email_here' and then verify by using '!verify code_here'")
     else:
-        await ctx.send(f'{ctx.author.mention} Invalid code! Request a new code.')
+        await ctx.send(f'{ctx.author.mention} Invalid code!')
+        await ctx.send("Request a code by using '!sendcode email_here' and then verify by using '!verify code_here'")
         del TFAcodes[member]
 
 
