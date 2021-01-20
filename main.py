@@ -34,16 +34,16 @@ async def on_ready():
 
 
 # Reacts to the mentioned messages
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
-    if message.content == "!subhajit":
-        await message.channel.send('ew')
-    messageauthor = message.author
-    msg = message.content
-    print(f"{messageauthor} said {msg}")
-    await bot.process_commands(message)
+#@bot.event
+#async def on_message(message):
+#    if message.author == bot.user:
+#        return
+#    if message.content == "!subhajit":
+#        await message.channel.send('ew')
+#    messageauthor = message.author
+#    msg = message.content
+#    print(f"{messageauthor} said {msg}")
+#    await bot.process_commands(message)
 
 
 # Member welcome
