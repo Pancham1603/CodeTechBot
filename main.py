@@ -11,6 +11,7 @@ import config
 
 bot = commands.Bot(command_prefix="!")
 
+
 TFAcodes = {}
 
 
@@ -107,6 +108,7 @@ async def verify(ctx, *, input):
         await member.add_roles(verifyrole)
         await genchannel.send(f"{ctx.author.mention} You are now verified.")
         del TFAcodes[member]
+        await ctx.send("Request a code by using '!sendcode email_here' and then verify by using '!verify code_here'")
     else:
         await ctx.send(f'{ctx.author.mention} Invalid code! Request a new code.')
         del TFAcodes[member]
@@ -339,6 +341,15 @@ async def resume(ctx):
 async def stop(ctx):
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     await voice.stop()
+
+
+@bot.event
+async def on_message_delete(message):
+    logs = bot.get_channel(***REMOVED***)
+    embed = discord.Embed(title=f'Message deleted in {message.channel}')
+    embed.add_field(name=f'Sender: {message.author}')
+    embed.add_field(name=f'Message: {message.content}')
+    await logs.send(embed=embed)
 
 
 # Keeps changing the status of the bot
