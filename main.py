@@ -12,7 +12,7 @@ import config
 bot = commands.Bot(command_prefix="!")
 
 TFAcodes = {}
-
+botbully = {}
 
 # Sends email by obtaining credentials from the config.py file
 def sendverifymail(receiver, message):
@@ -99,9 +99,9 @@ Birla Vidya Niketan
 # Verifies the new user with the code generated above
 # Deletes the key from the map one the user gets verified
 @bot.command()
-async def verify(ctx, *, input):
+async def verify(ctx, *, pin):
     member = ctx.author
-    if str(input) == str(TFAcodes.get(member)):
+    if str(pin) == str(TFAcodes.get(member)):
         del TFAcodes[member]
         verifyrole = ctx.guild.get_role(***REMOVED***)
         genchannel = bot.get_channel(***REMOVED***)
@@ -152,11 +152,23 @@ async def bully(ctx, member: discord.Member):
 
     line = random.choice(savage_lines)
 
-    if member == 'Pancham#0012':
+    if member.id == ***REMOVED***:
         await ctx.send(f'{ctx.author.mention} {line}')
         await ctx.send(f"{ctx.author.mention} You can't bully the god.")
-
-    await ctx.send(f"{member.mention} {line}")
+    elif member.id == ***REMOVED***:
+        if ctx.author in botbully:
+            muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
+            await ctx.author.add_roles(muted_role)
+            await ctx.send(f"{ctx.author.mention} I muted you for 5min lol")
+            del botbully[ctx.author]
+            await asyncio.sleep(300)
+            await member.remove_roles(muted_role)
+            await ctx.send(f'{member.mention} You have been unmuted.')
+        else:
+            botbully[ctx.author] = 1
+            await ctx.send(f'{ctx.author.mention} Do it once more then you see :)')
+    else:
+        await ctx.send(f"{member.mention} {line}")
 
 
 # Repeats whatever is typed and deletes the user command
@@ -198,6 +210,7 @@ async def cthelp(ctx):
     embed.add_field(name='!purge/!clear (Mod only)', value='Deletes bulk messages', inline=False)
     embed.add_field(name='!bully/!roast (mention_user)', value="Bullies the mentioned user", inline=False)
     embed.add_field(name='!sendcode email_here', value='Sends TFA email for verified role', inline=False)
+    embed.add_field(name='!magic8ball question_here', value='Magic 8 ball', inline=False)
     await ctx.send(embed=embed)
 
 
@@ -345,12 +358,39 @@ async def stop(ctx):
     await voice.stop()
 
 
+@bot.command(aliases=['m8b', '8ball', 'magicball'])
+async def magic8ball(ctx, *, question):
+    answers = [
+        'It is certain',
+        'It is decidedly so',
+        'Without a doubt',
+        'Yes, definitely',
+        'You may rely on it',
+        'Ah I see it, yes',
+        'Most likely',
+        'Outlook good',
+        'Yes',
+        'Signs point to yes',
+        'Reply hazy try again',
+        'Ask again later',
+        'Better not tell you now',
+        'Cannot predict now',
+        'Concentrate and ask again',
+        "Don't count on it",
+        'My reply is no',
+        'My sources say no',
+        'Outlook not so good',
+        'Very doubtful'
+    ]
+    reply = random.choice(answers)
+    await ctx.send(f"{ctx.author.mention} {reply}.")
+
+
 @bot.event
 async def on_message_delete(message):
     logs = bot.get_channel(***REMOVED***)
-    embed = discord.Embed(title=f'Message deleted in {message.channel}')
-    embed.add_field(name=f'Sender: {message.author}')
-    embed.add_field(name=f'Message: {message.content}')
+    embed = discord.Embed(title=f'Message deleted in {message.channel}', colour=discord.Color.blue())
+    embed.add_field(name=f'Sender: {message.author}', value=f'Message: {message.content}')
     await logs.send(embed=embed)
 
 
