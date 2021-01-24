@@ -162,7 +162,7 @@ async def bully(ctx, member: discord.Member):
             await ctx.send(f"{ctx.author.mention} I muted you for 5min lol")
             del botbully[ctx.author]
             await asyncio.sleep(300)
-            await member.remove_roles(muted_role)
+            await ctx.author.remove_roles(muted_role)
             await ctx.send(f'{ctx.author.mention} You have been unmuted.')
         else:
             botbully[ctx.author] = 1
