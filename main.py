@@ -14,6 +14,7 @@ bot = commands.Bot(command_prefix="!")
 TFAcodes = {}
 botbully = {}
 
+
 # Sends email by obtaining credentials from the config.py file
 def sendverifymail(receiver, message):
     server = smtplib.SMTP('smtp.gmail.com:587')
@@ -184,6 +185,7 @@ async def mimic(ctx, *, words: commands.clean_content):
 @bot.command()
 async def ping(ctx):
     print(ctx.author)
+    print(ctx.channel.id)
     await ctx.send(f"Pong! **Latency: {round(bot.latency * 1000)}ms**")
 
 
@@ -211,6 +213,7 @@ async def cthelp(ctx):
     embed.add_field(name='!bully/!roast (mention_user)', value="Bullies the mentioned user", inline=False)
     embed.add_field(name='!sendcode email_here', value='Sends TFA email for verified role', inline=False)
     embed.add_field(name='!magic8ball question_here', value='Magic 8 ball', inline=False)
+    embed.add_field(name='!tictactoe/!ttt', value='Tic Tac Toe game', inline=False)
     await ctx.send(embed=embed)
 
 
@@ -285,7 +288,6 @@ async def addevent(ctx, *, event=None):
 @has_permissions(kick_members=True)
 async def mute(ctx, member: discord.Member, time='null', *, reason='No reason'):
     logchannel = bot.get_channel(***REMOVED***)
-    # muterole = ctx.guild.get_role(***REMOVED***)
     muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
     time_convert = {"s": 1, "m": 60, "h": 3600, "d": 86400}
     if time == 'null':
@@ -386,6 +388,16 @@ async def magic8ball(ctx, *, question):
     await ctx.send(f"{ctx.author.mention} {reply}.")
 
 
+@bot.command()
+async def stats(ctx):
+    await ctx.send('Calculating...')
+    counter = 0
+    async for msg in discord.utils.get(ctx.channel.history(limit=100)):
+        if msg.author == ctx.author:
+            counter += 1
+    await ctx.send(f'{ctx.author} has {str(counter)} messages in {ctx.channel}.')
+
+
 @bot.event
 async def on_message_delete(message):
     logs = bot.get_channel(***REMOVED***)
@@ -402,6 +414,162 @@ async def changepresence():
         status = random.choice(statuses)
         await bot.change_presence(activity=discord.Game(status))
         await asyncio.sleep(3)
+
+
+player1 = ""
+player2 = ""
+turn = ""
+gameOver = True
+
+board = []
+
+winningConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+]
+
+
+@bot.command(aliases=['ttt'])
+async def tictactoe(ctx, p1: discord.Member, p2: discord.Member):
+    global count
+    global player1
+    global player2
+    global turn
+    global gameOver
+    if ctx.channel.id == ***REMOVED***:
+        if gameOver:
+            global board
+            board = [":white_large_square:", ":white_large_square:", ":white_large_square:",
+                     ":white_large_square:", ":white_large_square:", ":white_large_square:",
+                     ":white_large_square:", ":white_large_square:", ":white_large_square:"]
+            turn = ""
+            gameOver = False
+            count = 0
+
+            player1 = p1
+            player2 = p2
+            tictactoe.user1 = p1.id
+            tictactoe.user2 = p2.id
+
+            line = ""
+            for x in range(len(board)):
+                if x == 2 or x == 5 or x == 8:
+                    line += " " + board[x]
+                    await ctx.send(line)
+                    line = ""
+                else:
+                    line += " " + board[x]
+
+            num = random.randint(1, 2)
+            if num == 1:
+                turn = player1
+                await ctx.send("It is <@" + str(player1.id) + ">'s turn.")
+            elif num == 2:
+                turn = player2
+                await ctx.send("It is <@" + str(player2.id) + ">'s turn.")
+        else:
+            await ctx.send("A game is already in progress! Finish it before starting a new one.")
+    else:
+        await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
+
+
+@bot.command()
+async def place(ctx, pos: int):
+    global turn
+    global player1
+    global player2
+    global board
+    global count
+
+    if ctx.channel.id == ***REMOVED***:
+        if not gameOver:
+            mark = ""
+            if turn == ctx.author:
+                if turn == player1:
+                    mark = ":regional_indicator_x:"
+                elif turn == player2:
+                    mark = ":o2:"
+                if 0 < pos < 10 and board[pos - 1] == ":white_large_square:":
+                    board[pos - 1] = mark
+                    count += 1
+
+                    line = ""
+                    for x in range(len(board)):
+                        if x == 2 or x == 5 or x == 8:
+                            line += " " + board[x]
+                            await ctx.send(line)
+                            line = ""
+                        else:
+                            line += " " + board[x]
+
+                    checkWinner(winningConditions, mark)
+                    if gameOver:
+                        await ctx.send(mark + " wins!")
+                    elif count >= 9:
+                        await ctx.send("It's a tie!")
+
+                    if turn == player1:
+                        turn = player2
+                    elif turn == player2:
+                        turn = player1
+                else:
+                    await ctx.send("Be sure to choose an integer between 1 and 9 (inclusive) and an unmarked tile.")
+            else:
+                await ctx.send("It is not your turn.")
+        else:
+            await ctx.send("Please start a new game using the !tictactoe command.")
+    else:
+        await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
+
+
+def checkWinner(winningConditions, mark):
+    global gameOver
+    for condition in winningConditions:
+        if board[condition[0]] == mark and board[condition[1]] == mark and board[condition[2]] == mark:
+            gameOver = True
+
+
+@bot.command()
+async def endgame(ctx):
+    global player1
+    global player2
+    global gameOver
+    if ctx.channel.id == ***REMOVED***:
+        if not gameOver:
+            users = [tictactoe.user1, tictactoe.user2, ***REMOVED***, 779346424890130504, 713317312488275978,
+                     596747974659538964, ***REMOVED***]
+            if ctx.author.id in users:
+                gameOver = True
+                await ctx.send("Game session interrupted. No winner!")
+            else:
+                await ctx.send("This command can only be used by current players and admins.")
+        else:
+            await ctx.send("Please start a new game using the !tictactoe command.")
+    else:
+        await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
+
+
+@tictactoe.error
+async def tictactoe_error(ctx, error):
+    print(error)
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please mention 2 players for this command.")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Please make sure to mention/ping players (ie. <@***REMOVED***>).")
+
+
+@place.error
+async def place_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please enter a position you would like to mark.")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("Please make sure to enter an integer.")
 
 
 token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ.FlMhIWM6x_eeQV93Eibsn4C6lno'  # input the unique bot token from dev panel (string)
