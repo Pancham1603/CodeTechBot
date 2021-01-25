@@ -8,6 +8,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 import config
+from PIL import Image, ImageFont, ImageDraw
+from io import BytesIO
 
 bot = commands.Bot(command_prefix="!")
 
@@ -360,6 +362,7 @@ async def stop(ctx):
     await voice.stop()
 
 
+# noinspection PyUnusedLocal
 @bot.command(aliases=['m8b', '8ball', 'magicball'])
 async def magic8ball(ctx, *, question):
     answers = [
@@ -435,6 +438,7 @@ winningConditions = [
 ]
 
 
+# noinspection PyGlobalUndefined
 @bot.command(aliases=['ttt'])
 async def tictactoe(ctx, p1: discord.Member, p2: discord.Member):
     global count
@@ -479,6 +483,7 @@ async def tictactoe(ctx, p1: discord.Member, p2: discord.Member):
         await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
 
 
+# noinspection PyGlobalUndefined
 @bot.command()
 async def place(ctx, pos: int):
     global turn
@@ -528,6 +533,7 @@ async def place(ctx, pos: int):
         await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
 
 
+# noinspection PyShadowingNames
 def checkWinner(winningConditions, mark):
     global gameOver
     for condition in winningConditions:
@@ -570,6 +576,29 @@ async def place_error(ctx, error):
         await ctx.send("Please enter a position you would like to mark.")
     elif isinstance(error, commands.BadArgument):
         await ctx.send("Please make sure to enter an integer.")
+
+
+@bot.command()
+async def simpalert(ctx, simp: discord.Member = None):
+    if simp is None:
+        simp = ctx.author
+    template = Image.open('images/simp_template.png')
+    asset = simp.avatar_url_as(size=128)
+    data = BytesIO(await asset.read())
+    simp_pfp = Image.open(data)
+    simp_pfp = simp_pfp.resize((184, 184))
+    template.paste(simp_pfp, (36, 89))
+    font = ImageFont.truetype('fonts/college.ttf', 40)
+    draw = ImageDraw.Draw(template)
+    text = simp.display_name
+    draw.text((42, 283), text, (255, 255, 255), font=font)
+    template.save('images/simp_user_profile.png')
+    await ctx.send(file=discord.File('images/simp_user_profile.png'))
+
+
+@bot.command(aliases=['logos'])
+async def logo(ctx):
+    await ctx.send(file=discord.File('images/codetech_assets.zip'))
 
 
 token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ.FlMhIWM6x_eeQV93Eibsn4C6lno'  # input the unique bot token from dev panel (string)
