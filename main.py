@@ -11,6 +11,7 @@ import config
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
 
+
 bot = commands.Bot(command_prefix="!")
 
 TFAcodes = {}
@@ -582,23 +583,74 @@ async def place_error(ctx, error):
 async def simpalert(ctx, simp: discord.Member = None):
     if simp is None:
         simp = ctx.author
-    template = Image.open('images/simp_template.png')
+    template = Image.open('codetechbot/images/simp_template.png')
     asset = simp.avatar_url_as(size=128)
     data = BytesIO(await asset.read())
     simp_pfp = Image.open(data)
     simp_pfp = simp_pfp.resize((184, 184))
     template.paste(simp_pfp, (36, 89))
-    font = ImageFont.truetype('fonts/college.ttf', 40)
+    font = ImageFont.truetype('codetechbot/fonts/college.ttf', 40)
     draw = ImageDraw.Draw(template)
     text = simp.display_name
     draw.text((42, 283), text, (255, 255, 255), font=font)
-    template.save('images/simp_user_profile.png')
-    await ctx.send(file=discord.File('images/simp_user_profile.png'))
+    template.save('codetechbot/images/simp_user_profile.png')
+    await ctx.send(file=discord.File('codetechbot/images/simp_user_profile.png'))
 
 
 @bot.command(aliases=['logos'])
 async def logo(ctx):
-    await ctx.send(file=discord.File('images/codetech_assets.zip'))
+    await ctx.send(file=discord.File('codetechbot/images/codetech_assets.zip'))
+
+
+muted_mod = []
+
+
+@bot.command()
+async def modmute(ctx, member:discord.Member=None):
+    valid = [***REMOVED***,***REMOVED***,***REMOVED***]
+    mod_role = discord.utils.get(ctx.guild.roles, name='CT#Admin')
+    if ctx.author.id in valid:
+        if member == None:
+            await ctx.send("Please mention a moderator!")
+        elif mod_role not in member.roles:
+            await ctx.send(f"The mentioned user is not a moderator.")
+        else:
+            muted_mod.append(member.id)
+            logchannel = bot.get_channel(***REMOVED***)
+            embed = discord.Embed(title=f'{ctx.author.display_name} muted {member.display_name}', color=discord.Color.red())
+            await ctx.send(embed=embed)
+            await logchannel.send(embed=embed)
+    else:
+        await ctx.send("This command can only be used by roles higher than 'CT#Admin'.")
+
+
+@bot.command()
+async def modunmute(ctx, member:discord.Member=None):
+    valid = [***REMOVED***,***REMOVED***,***REMOVED***]
+    mod_role = discord.utils.get(ctx.guild.roles, name='CT#Admin')
+    if ctx.author.id in valid:
+        if member == None:
+            await ctx.send("Please mention a moderator!")
+        elif mod_role not in member.roles:
+            await ctx.send(f"The mentioned user is not a moderator.")
+        elif member.id not in muted_mod:
+            await ctx.send("The mentioned user is not muted.")
+        else:
+            muted_mod.remove(member.id)
+            logchannel = bot.get_channel(***REMOVED***)
+            embed = discord.Embed(title=f'{ctx.author.display_name} ummuted {member.display_name}', color=discord.Color.green())
+            await ctx.send(embed=embed)
+            await logchannel.send(embed=embed)
+    else:
+        await ctx.send("This command can only be used by roles higher than 'CT#Admin'.")
+
+
+@bot.event
+async def on_message(message):
+    if message.author.id in muted_mod:
+        await message.delete()
+    await bot.process_commands(message)
+        
 
 
 token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ.FlMhIWM6x_eeQV93Eibsn4C6lno'  # input the unique bot token from dev panel (string)
