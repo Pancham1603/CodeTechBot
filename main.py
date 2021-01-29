@@ -13,6 +13,7 @@ from io import BytesIO
 
 
 bot = commands.Bot(command_prefix="!")
+bot.remove_command('help')
 
 TFAcodes = {}
 botbully = {}
@@ -194,8 +195,8 @@ async def ping(ctx):
 
 # Displays a detailed list of useful commands
 @bot.command()
-async def cthelp(ctx):
-    embed = discord.Embed(title="Here, check out some of my awesome features!", description='  ',
+async def help(ctx):
+    embed = discord.Embed(title="Here, check out some of my awesome features!", description='Use !help <command> for extended information on a command.',
                           colour=discord.Colour.blue(), url='***REMOVED***')
     # embed.set_author(name=client.user.name, icon_url=client.user.avatar_url)
     embed.set_thumbnail(url='https://static.wixstatic.com/media/ce33e6_1bcf87668c56491694ecffda5c7b910a~mv2.png/v1'
