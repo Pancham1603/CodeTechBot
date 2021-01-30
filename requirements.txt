@@ -11,3 +11,4 @@ Pillow==8.1.0
 pymongo==3.11.2
 typing-extensions==3.7.4.3
 yarl==1.6.3
+selenium

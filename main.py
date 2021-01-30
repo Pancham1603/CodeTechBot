@@ -10,6 +10,8 @@ from discord.ext.commands import has_permissions
 import config
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
+import selenium
+from selenium import webdriver
 
 
 bot = commands.Bot(command_prefix="!")
@@ -651,7 +653,14 @@ async def on_message(message):
     if message.author.id in muted_mod:
         await message.delete()
     await bot.process_commands(message)
-        
+
+
+@bot.command()
+async def webtest(ctx):
+    PATH = 'codetechbot/chromedriver'
+    driver = webdriver.Chrome(PATH)
+    driver.get('http://www.birla.ac.in/')
+    await ctx.send(driver.title)    
 
 
 token = 'Nzk3NTM3NTAxNDQ2OTMwNDYz.X_n6rQ.FlMhIWM6x_eeQV93Eibsn4C6lno'  # input the unique bot token from dev panel (string)
