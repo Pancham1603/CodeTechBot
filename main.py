@@ -21,7 +21,7 @@ bot.remove_command('help')
 async def changepresence():
     await bot.wait_until_ready()
     while not bot.is_closed():
-        statuses = ['!help', 'Under development :/']
+        statuses = ['!help', 'Under development :/', 'check out upcoming !events', 'ask the ball !m8b', 'tictactoe !ttt']
         status = random.choice(statuses)
         await bot.change_presence(activity=discord.Game(status))
         await asyncio.sleep(3)
@@ -34,7 +34,7 @@ bot.load_extension('cogs.help')
 bot.load_extension('cogs.logos')
 bot.load_extension('cogs.magic8ball')
 bot.load_extension('cogs.moderation')
-bot.load_extension('cogs.mod_moderation')
+# bot.load_extension('cogs.mod_moderation')
 bot.load_extension('cogs.purge')
 bot.load_extension('cogs.simpalert')
 bot.load_extension('cogs.tictactoe')

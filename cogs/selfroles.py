@@ -1,15 +1,13 @@
 from discord.ext import commands
+from discord.ext.commands import has_permissions
 import discord
-
 
 class Startup(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['logos'])
-    async def logo(self, ctx):
-        await ctx.send(file=discord.File('codetech_assets.zip'))
+
 
 
 def setup(bot):

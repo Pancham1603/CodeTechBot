@@ -1,5 +1,6 @@
 from discord.ext import commands
 from discord.ext.commands import has_permissions
+import discord
 
 class Startup(commands.Cog):
 
@@ -12,8 +13,10 @@ class Startup(commands.Cog):
     async def clear(self, ctx, amount: int):
         logchannel = self.bot.get_channel(***REMOVED***)
         await ctx.channel.purge(limit=amount + 1)
-        await ctx.send(f"{ctx.author} deleted {amount} messages.", delete_after=5)
-        await logchannel.send(f"{ctx.author} deleted {amount} messages in {ctx.channel}")
+        embed = discord.Embed(title=f"{ctx.author} deleted {amount} messages.", colour=discord.Colour.dark_grey())
+        await ctx.send(embed=embed, delete_after=5)
+        await logchannel.send(embed)
+
 
 def setup(bot):
     bot.add_cog(Startup(bot))

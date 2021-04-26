@@ -18,7 +18,8 @@ class Startup(commands.Cog):
         muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
         time_convert = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         if time == 'null':
-            await ctx.send(f'{ctx.author.mention} Please specify a time period!')
+            emb = discord.Embed(title=f'{ctx.author.mention} Please specify a time period!')
+            await ctx.send(embed=emb)
         else:
             if not time[-1].isalpha:
                 tempmute = int(time[0]) * time_convert['m']
@@ -28,14 +29,15 @@ class Startup(commands.Cog):
             muted_members.append(member)
             embed = discord.Embed(title=f"{member.name} has been muted for {time} by {ctx.author.name}",
                                   description=reason,
-                                  color=discord.Colour.blue())
+                                  color=discord.Colour.dark_grey())
             await ctx.send(embed=embed)
-            await logchannel.send(f"{member} was muted for {time} by {ctx.author}. [{reason}]")
+            await logchannel.send(embed=embed)
 
             await asyncio.sleep(tempmute)
             await member.remove_roles(muted_role)
             muted_members.remove(member)
-            await ctx.send(f'{member.mention} You have been unmuted.')
+            embed = discord.Embed(title=f'{member.mention} You have been unmuted.')
+            await ctx.send(embed=embed)
 
     # Unmutes the mentioned user (Mod only)
     @commands.command()
@@ -44,8 +46,9 @@ class Startup(commands.Cog):
         logchannel = self.bot.get_channel(***REMOVED***)
         muterole = ctx.guild.get_role(***REMOVED***)
         await member.remove_roles(muterole)
-        await ctx.send(f"{member.mention} was unmuted by {ctx.author.mention}")
-        await logchannel.send(f"{member} was unmuted by {ctx.author}")
+        embed = discord.Embed(title=f"{member.mention} was unmuted by {ctx.author.mention}")
+        await ctx.send(embed=embed)
+        await logchannel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -60,8 +63,9 @@ class Startup(commands.Cog):
     async def kick(self, ctx, member: discord.Member, *, reason='No reason'):
         logchannel = self.bot.get_channel(***REMOVED***)
         await member.kick(reason=reason)
-        await ctx.send(f"{member.mention} was kicked by {ctx.author.mention}. [{reason}]")
-        await logchannel.send(f"{member.mention} was kicked by {ctx.author.mention}. [{reason}]")
+        embed = discord.Embed(title=f"{member.mention} was kicked by {ctx.author.mention}.", description=reason)
+        await ctx.send(embed=embed)
+        await logchannel.send(embed=embed)
 
     # Bans the mentioned user (Mod only)
     @commands.command()
@@ -69,8 +73,9 @@ class Startup(commands.Cog):
     async def ban(self, ctx, member: discord.Member, *, reason='No reason'):
         logchannel = self.bot.get_channel(***REMOVED***)
         await member.kick(reason=reason)
-        await ctx.send(f"{member.mention} was banned by {ctx.author.mention}. [{reason}]")
-        await logchannel.send(f"{member.mention} was banned by {ctx.author.mention}. [{reason}]")
+        embed = discord.Embed(title=f"{member.mention} was banned by {ctx.author.mention}.", description=reason)
+        await ctx.send(embed=embed)
+        await logchannel.send(embed=embed)
 
 
 def setup(bot):

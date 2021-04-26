@@ -1,10 +1,12 @@
 from discord.ext import commands
+import discord
 import smtplib
 import random
 
 TFAcodes = {}
 EMAIL_ADDRESS = '***REMOVED***'
 PASSWORD = '***REMOVED***'
+
 
 def sendverifymail(receiver, message):
     server = smtplib.SMTP('smtp.gmail.com:587')
@@ -47,7 +49,8 @@ class Startup(commands.Cog):
     """
         message = 'Subject: {}\n\n{}'.format(subject, msg)
         sendverifymail(email, message)
-        await ctx.send(f'{ctx.author.mention} Check your inbox and verify by using the command !verify XXXXXX')
+        embed = discord.Embed(title=f'{ctx.author.mention} Check your inbox and verify by using the command !verify XXXXXX', colour=discord.Colour.dark_orange())
+        await ctx.send(embed=embed)
         member = ctx.author
         TFAcodes[member] = self.sendcode.code
 
@@ -61,14 +64,17 @@ class Startup(commands.Cog):
             verifyrole = ctx.guild.get_role(***REMOVED***)
             genchannel = self.bot.get_channel(***REMOVED***)
             await member.add_roles(verifyrole)
-            await genchannel.send(f"{ctx.author.mention} You are now verified.")
-            await ctx.send('Verified')
-            await ctx.send(
-                "New members: Request a code by using '!sendcode <email_here>' and then verify by using '!verify <code_here>'")
+            embed = discord.Embed(title=f"{ctx.author.mention} You are now verified.", colour=discord.Colour.green())
+            await genchannel.send(embed=embed)
+            await ctx.send(embed=embed)
+            embed = discord.Embed(title="New members: Request a code by using '!sendcode <email_here>' and then verify by using '!verify <code_here>'", colour=discord.Colour.dark_grey())
+            await ctx.send(embed=embed)
+
         else:
-            await ctx.send(f'{ctx.author.mention} Invalid code!')
-            await ctx.send(
-                "Request a code by using '!sendcode <email_here>' and then verify by using '!verify <code_here>'")
+            embed = discord.Embed(title=f"{ctx.author.mention} Invalid code!")
+            await ctx.send(embed=embed)
+            embed = discord.Embed(title="Request a code by using '!sendcode <email_here>' and then verify by using '!verify <code_here>'", colour=discord.Colour.dark_grey())
+            await ctx.send(embed=embed)
             del TFAcodes[member]
 
 
