@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="176a8de2-924e-4540-ab50-cf47c78cb153" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/cogs/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/cogs/events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cogs/logos.py" beforeDir="false" afterPath="$PROJECT_DIR$/cogs/logos.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cogs/moderation.py" beforeDir="false" afterPath="$PROJECT_DIR$/cogs/moderation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cogs/purge.py" beforeDir="false" afterPath="$PROJECT_DIR$/cogs/purge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cogs/verification.py" beforeDir="false" afterPath="$PROJECT_DIR$/cogs/verification.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/codetech_assets.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/discord-invite-bg-user.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/images/discord-invite-bg-user.jpeg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="176a8de2-924e-4540-ab50-cf47c78cb153" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
