@@ -50,10 +50,10 @@ class Startup(commands.Cog):
 
         line = random.choice(savage_lines)
 
-        if member.id == ***REMOVED***:
+        if member.id == :
             await ctx.send(f'{ctx.author.mention} {line}')
             await ctx.send(f"{ctx.author.mention} You can't bully the god.")
-        elif member.id == ***REMOVED***:
+        elif member.id == :
             if ctx.author in botbully:
                 muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
                 await ctx.author.add_roles(muted_role)

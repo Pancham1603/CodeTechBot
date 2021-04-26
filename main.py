@@ -44,6 +44,6 @@ bot.load_extension('cogs.welcomer')
 bot.load_extension('cogs.startup')
 
 
-token = '***REMOVED***'  # input the unique bot token from dev panel (string)
+token = ''  # input the unique bot token from dev panel (string)
 bot.loop.create_task(changepresence())  # to change status every 3 seconds
 bot.run(token)  # finally run the bot

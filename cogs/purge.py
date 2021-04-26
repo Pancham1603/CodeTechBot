@@ -11,7 +11,7 @@ class Startup(commands.Cog):
     @commands.command(aliases=['purge'])
     @has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int):
-        logchannel = self.bot.get_channel(***REMOVED***)
+        logchannel = self.bot.get_channel()
         await ctx.channel.purge(limit=amount + 1)
         embed = discord.Embed(title=f"{ctx.author} deleted {amount} messages.", colour=discord.Colour.dark_grey())
         await ctx.send(embed=embed, delete_after=5)

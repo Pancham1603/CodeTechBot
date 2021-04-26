@@ -9,7 +9,7 @@ class Startup(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        logs = self.bot.get_channel(***REMOVED***)
+        logs = self.bot.get_channel()
         embed = discord.Embed(title=f'Message deleted in {message.channel}', colour=discord.Color.blue())
         embed.add_field(name=f'Sender: {message.author}', value=f'Message: {message.content}')
         await logs.send(embed=embed)

@@ -13,8 +13,8 @@ class Startup(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         guild = member.guild
-        doorchannel = self.bot.get_channel(***REMOVED***)
-        verifychannel = self.bot.get_channel(***REMOVED***)
+        doorchannel = self.bot.get_channel()
+        verifychannel = self.bot.get_channel()
         muted_role = discord.utils.get(guild.roles, name="Muted")
 
         if member in muted_members:

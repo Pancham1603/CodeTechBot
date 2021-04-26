@@ -4,8 +4,8 @@ import smtplib
 import random
 
 TFAcodes = {}
-EMAIL_ADDRESS = '***REMOVED***'
-PASSWORD = '***REMOVED***'
+EMAIL_ADDRESS = ''
+PASSWORD = ''
 
 
 def sendverifymail(receiver, message):
@@ -61,8 +61,8 @@ class Startup(commands.Cog):
         member = ctx.author
         if str(pin) == str(TFAcodes.get(member)):
             del TFAcodes[member]
-            verifyrole = ctx.guild.get_role(***REMOVED***)
-            genchannel = self.bot.get_channel(***REMOVED***)
+            verifyrole = ctx.guild.get_role()
+            genchannel = self.bot.get_channel()
             await member.add_roles(verifyrole)
             embed = discord.Embed(title=f"{ctx.author} You are now verified.", colour=discord.Colour.green())
             await genchannel.send(embed=embed)

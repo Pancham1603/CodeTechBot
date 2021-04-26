@@ -1,2 +1,0 @@
-EMAIL_ADDRESS = '***REMOVED***'
-PASSWORD = '***REMOVED***'

@@ -8,12 +8,12 @@ from discord.utils import get
 import asyncio
 
 client = MongoClient(
-    "***REMOVED***")
-db = ***REMOVED***
-collection1 = ***REMOVED***
-collection2 = ***REMOVED***
-collection3 = ***REMOVED***
-collection4 = ***REMOVED***
+    "")
+db =
+collection1 =
+collection2 =
+collection3 =
+collection4 =
 
 embedColors = [discord.Color.blue(), discord.Color.blurple(), discord.Color.dark_blue(), discord.Color.dark_gold(),
                discord.Color.dark_green(), discord.Color.dark_grey(), discord.Color.dark_grey(),
@@ -216,7 +216,7 @@ class Startup(commands.Cog):
 SAMPLE REGISTRATION
 !register fullname Pancham Agarwal
 !register cls-sec 12-C
-!register email ***REMOVED***
+!register email codetechbvn@gmail.com
 !register subevent quiz
 !register school Birla Vidya Niketan
 !register club CodeTech BVN

@@ -11,7 +11,7 @@ class Startup(commands.Cog):
 
     @commands.command()
     async def modmute(self, ctx, member: discord.Member = None):
-        valid = [***REMOVED***, ***REMOVED***, ***REMOVED***]
+        valid = ['ids here in int format']
         mod_role = discord.utils.get(ctx.guild.roles, name='CT#Admin')
         if ctx.author.id in valid:
             if member == None:
@@ -20,7 +20,7 @@ class Startup(commands.Cog):
                 await ctx.send(f"The mentioned user is not a moderator.")
             else:
                 muted_mod.append(member.id)
-                logchannel = self.bot.get_channel(***REMOVED***)
+                logchannel = self.bot.get_channel()
                 embed = discord.Embed(title=f'{ctx.author.display_name} muted {member.display_name}',
                                       color=discord.Color.red())
                 await ctx.send(embed=embed)
@@ -30,7 +30,7 @@ class Startup(commands.Cog):
 
     @commands.command()
     async def modunmute(self, ctx, member: discord.Member = None):
-        valid = [***REMOVED***, ***REMOVED***, ***REMOVED***]
+        valid = [, , ]
         mod_role = discord.utils.get(ctx.guild.roles, name='CT#Admin')
         if ctx.author.id in valid:
             if member == None:
@@ -41,7 +41,7 @@ class Startup(commands.Cog):
                 await ctx.send("The mentioned user is not muted.")
             else:
                 muted_mod.remove(member.id)
-                logchannel = self.bot.get_channel(***REMOVED***)
+                logchannel = self.bot.get_channel()
                 embed = discord.Embed(title=f'{ctx.author.display_name} ummuted {member.display_name}',
                                       color=discord.Color.green())
                 await ctx.send(embed=embed)

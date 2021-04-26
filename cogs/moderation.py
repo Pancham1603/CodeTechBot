@@ -14,7 +14,7 @@ class Startup(commands.Cog):
     @commands.command()
     @has_permissions(kick_members=True)
     async def mute(self, ctx, member: discord.Member, time='null', *, reason='No reason'):
-        logchannel = self.bot.get_channel(***REMOVED***)
+        logchannel = self.bot.get_channel()
         muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
         time_convert = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         if time == 'null':
@@ -43,8 +43,8 @@ class Startup(commands.Cog):
     @commands.command()
     @has_permissions(kick_members=True)
     async def unmute(self, ctx, member: discord.Member):
-        logchannel = self.bot.get_channel(***REMOVED***)
-        muterole = ctx.guild.get_role(***REMOVED***)
+        logchannel = self.bot.get_channel()
+        muterole = ctx.guild.get_role()
         await member.remove_roles(muterole)
         embed = discord.Embed(title=f"{member.mention} was unmuted by {ctx.author.mention}")
         await ctx.send(embed=embed)
@@ -61,7 +61,7 @@ class Startup(commands.Cog):
     @commands.command()
     @has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason='No reason'):
-        logchannel = self.bot.get_channel(***REMOVED***)
+        logchannel = self.bot.get_channel()
         await member.kick(reason=reason)
         embed = discord.Embed(title=f"{member.mention} was kicked by {ctx.author.mention}.", description=reason)
         await ctx.send(embed=embed)
@@ -71,7 +71,7 @@ class Startup(commands.Cog):
     @commands.command()
     @has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason='No reason'):
-        logchannel = self.bot.get_channel(***REMOVED***)
+        logchannel = self.bot.get_channel()
         await member.kick(reason=reason)
         embed = discord.Embed(title=f"{member.mention} was banned by {ctx.author.mention}.", description=reason)
         await ctx.send(embed=embed)

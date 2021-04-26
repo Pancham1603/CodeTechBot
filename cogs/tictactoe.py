@@ -41,7 +41,7 @@ class Startup(commands.Cog):
         global player2
         global turn
         global gameOver
-        if ctx.channel.id == ***REMOVED***:
+        if ctx.channel.id == :
             if gameOver:
                 global board
                 board = [":white_large_square:", ":white_large_square:", ":white_large_square:",
@@ -75,7 +75,7 @@ class Startup(commands.Cog):
             else:
                 await ctx.send("A game is already in progress! Finish it before starting a new one.")
         else:
-            await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
+            await ctx.send(f"You can play this game in <#{}> only!")
 
     # noinspection PyGlobalUndefined
     @commands.command()
@@ -86,7 +86,7 @@ class Startup(commands.Cog):
         global board
         global count
 
-        if ctx.channel.id == ***REMOVED***:
+        if ctx.channel.id == :
             if not gameOver:
                 mark = ""
                 if turn == ctx.author:
@@ -124,18 +124,18 @@ class Startup(commands.Cog):
             else:
                 await ctx.send("Please start a new game using the !tictactoe command.")
         else:
-            await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
+            await ctx.send(f"You can play this game in <#{}> only!")
 
     @commands.command()
     async def endgame(self, ctx):
         global player1
         global player2
         global gameOver
-        if ctx.channel.id == ***REMOVED***:
+        if ctx.channel.id == :
             if not gameOver:
-                users = [self.tictactoe.user1, self.tictactoe.user2, ***REMOVED***, 779346424890130504,
-                         713317312488275978,
-                         596747974659538964, ***REMOVED***]
+                users = [self.tictactoe.user1, self.tictactoe.user2, , ,
+                         ,
+                         , ]
                 if ctx.author.id in users:
                     gameOver = True
                     await ctx.send("Game session interrupted. No winner!")
@@ -144,7 +144,7 @@ class Startup(commands.Cog):
             else:
                 await ctx.send("Please start a new game using the !tictactoe command.")
         else:
-            await ctx.send(f"You can play this game in <#{***REMOVED***}> only!")
+            await ctx.send(f"You can play this game in <#{}> only!")
 
     @tictactoe.error
     async def tictactoe_error(self, ctx, error):
@@ -152,7 +152,7 @@ class Startup(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send("Please mention 2 players for this command.")
         elif isinstance(error, commands.BadArgument):
-            await ctx.send("Please make sure to mention/ping players (ie. <@***REMOVED***>).")
+            await ctx.send("Please make sure to mention/ping players (ie. <@797537501446930463>).")
 
     @place.error
     async def place_error(self, ctx, error):
